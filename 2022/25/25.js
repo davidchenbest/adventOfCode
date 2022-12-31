@@ -56,7 +56,7 @@ function convert(num) {
         const power = answer.length
         const powerVal = 5 ** power
         if (num > total) {
-            for (let i = -2; i < 3; i++) {
+            for (let i = 1; i < 3; i++) {
                 const val = powerVal * i
                 if ((val + total) > num) {
                     answer.unshift(i)
