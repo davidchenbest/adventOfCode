@@ -1,0 +1,1 @@
+https://github.com/lynerist/Advent-of-code-2021-golang

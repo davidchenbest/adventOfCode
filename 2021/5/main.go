@@ -4,123 +4,90 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-	"strconv"
-	"strings"
 )
 
 func main() {
 	var starts [][]int
 	var ends [][]int
-	fileName := "input"
+	fileName := "test"
 	file, _ := os.Open(fileName)
 	defer file.Close()
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
-		points := strings.Split(scanner.Text(), " -> ")
-		first := strings.Split(points[0], ",")
-		second := strings.Split(points[1], ",")
+		var x1, y1, x2, y2 int
+		fmt.Sscanf(scanner.Text(), "%d,%d -> %d,%d", &x1, &y1, &x2, &y2)
+		starts = append(starts, []int{x1, y1})
+		ends = append(ends, []int{x2, y2})
 
-		starts = append(starts, strsToNum(first))
-		ends = append(ends, strsToNum(second))
-	}
-	maxx, maxy := findMaxXY(append(starts, ends...))
-	cords := make([][]int, maxy+1)
-	for i := range cords {
-		cords[i] = make([]int, maxx+1)
 	}
 
-	process(starts, ends, cords)
-	// print(cords)
-
+	process2(starts, ends)
 }
 
-func process(starts, ends [][]int, cords [][]int) {
+func process(starts, ends [][]int) {
+	M := make(map[string]int)
 	for i := range starts {
-		fillCords(cords, starts[i], ends[i])
+		x1 := starts[i][0]
+		y1 := starts[i][1]
+		x2 := ends[i][0]
+		y2 := ends[i][1]
+		if x1 == x2 || y1 == y2 {
+			key := fmt.Sprintf("%v,%v", x1, y1)
+			M[key]++
+			for x1 != x2 || y1 != y2 {
+				if x1 > x2 {
+					x1--
+				} else if x2 > x1 {
+					x1++
+				}
+				if y1 > y2 {
+					y1--
+				} else if y2 > y1 {
+					y1++
+				}
+				key := fmt.Sprintf("%v,%v", x1, y1)
+				M[key]++
+			}
+		}
 	}
 	count := 0
-	for _, r := range cords {
-		for _, c := range r {
-			if c > 1 {
-				count++
-			}
+	for key := range M {
+		if M[key] > 1 {
+			count++
 		}
 	}
 	fmt.Println(count)
 }
 
-func compare(i int, j int) (int, int) {
-	if i > j {
-		return j, i
-	}
-	return i, j
-}
-func fillCords(cords [][]int, start []int, end []int) {
-	x1 := start[0]
-	y1 := start[1]
-	x2 := end[0]
-	y2 := end[1]
-	if x1 == x2 {
-		min, max := compare(y1, y2)
-		for i := min; i <= max; i++ {
-			cords[i][x1]++
-		}
-	} else if y1 == y2 {
-		min, max := compare(x1, x2)
-		for i := min; i <= max; i++ {
-			cords[y1][i]++
-		}
-	} else {
-		// diagonal line
-		//mark the end point
-		cords[y2][x2]++
-		for x1 != x2 && y1 != y2 {
-			cords[y1][x1]++
-			if x1 < x2 {
-				x1++
-			} else {
+func process2(starts, ends [][]int) {
+	M := make(map[string]int)
+	for i := range starts {
+		x1 := starts[i][0]
+		y1 := starts[i][1]
+		x2 := ends[i][0]
+		y2 := ends[i][1]
+		key := fmt.Sprintf("%v,%v", x1, y1)
+		M[key]++
+		for x1 != x2 || y1 != y2 {
+			if x1 > x2 {
 				x1--
+			} else if x2 > x1 {
+				x1++
 			}
-			if y1 < y2 {
-				y1++
-			} else {
+			if y1 > y2 {
 				y1--
+			} else if y2 > y1 {
+				y1++
 			}
-		}
-
-	}
-
-}
-func findMaxXY(cords [][]int) (int, int) {
-	maxx := 0
-	maxy := 0
-	for _, cord := range cords {
-		x := cord[0]
-		y := cord[1]
-		if maxx < x {
-			maxx = x
-		}
-		if maxy < y {
-			maxy = y
+			key := fmt.Sprintf("%v,%v", x1, y1)
+			M[key]++
 		}
 	}
-	return maxx, maxy
-}
-
-func strsToNum(strs []string) []int {
-	var nums []int
-	for _, str := range strs {
-		num, _ := strconv.Atoi(str)
-		nums = append(nums, num)
-	}
-	return nums
-}
-
-func print(cords [][]int) {
-	for _, row := range cords {
-		for _, col := range row {
-			fmt.Printf("%2d", col)
+	count := 0
+	for key := range M {
+		if M[key] > 1 {
+			count++
 		}
-		fmt.Println()
 	}
+	fmt.Println(count)
 }
