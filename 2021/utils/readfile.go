@@ -26,3 +26,12 @@ func ReadFile(fileName string) ([]int, error) {
 
 	return lines, nil
 }
+
+func StringsToInt(strs []string) []int {
+	var nums []int
+	for _, s := range strs {
+		num, _ := strconv.Atoi(s)
+		nums = append(nums, num)
+	}
+	return nums
+}
