@@ -32,16 +32,12 @@ func process2(nums []int) {
 	}
 
 	for i := 0; i < 256; i++ {
-		var temp [9]int
-		for i := 8; i > -1; i-- {
-			if i == 0 {
-				temp[8] = days[0]
-				temp[6] += days[0]
-			} else {
-				temp[i-1] = days[i]
-			}
+		newFish := days[0]
+		for i := 0; i < len(days)-1; i++ {
+			days[i] = days[i+1]
 		}
-		days = temp
+		days[8] = newFish
+		days[6] += newFish
 		// print(days)
 	}
 
